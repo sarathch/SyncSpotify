@@ -1,21 +1,13 @@
 package com.example.syennamani.syncspotify;
 
-import android.support.annotation.NonNull;
-
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import java.util.List;
-import java.util.Map;
-
-import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 /**
  * Created by syennamani on 1/29/2018.
@@ -45,8 +37,8 @@ public class WebClient {
         return instance;
     }
 
-    public Call<JsonObject> getAccessTokenToClient(String headerVal, String str) {
-        return webService.getAccessToken(headerVal, str);
+    public Call<JsonObject> getAccessTokenToClient(String headerVal) {
+        return webService.getAccessToken(headerVal, "client_credentials");
     }
 
 }

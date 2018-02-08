@@ -33,9 +33,7 @@ public class SpotifyAlbumsPresenter implements SpotifyAlbumsContract.Presenter{
     @Override
     public void fetchAccessToken() {
         String headerVal = "Basic Y2YzZTRiMGQwYjYxNDA2Zjg0NWExMzMzNDMxNDc1OTI6ZDk1ODBlMDQ4MDUxNGFhMDhlMWZlOWFlMmRiNTI3NWI=";
-        Map<String, String> map = new HashMap<>();
-        map.put("grant_type","client_credentials");
-        Call<JsonObject> call = WebClient.getInstance().getAccessTokenToClient(headerVal, "client_credentials");
+        Call<JsonObject> call = WebClient.getInstance().getAccessTokenToClient(headerVal);
         call.enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
