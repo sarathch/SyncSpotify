@@ -1,15 +1,20 @@
-package com.example.syennamani.syncspotify;
+package com.example.syennamani.syncspotify.SpotifyAlbums;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.EditText;
+import android.widget.ListView;
+
+import com.example.syennamani.syncspotify.JSON.Albums;
+import com.example.syennamani.syncspotify.JSON.Items;
+import com.example.syennamani.syncspotify.R;
+
+import java.util.List;
 
 
 /**
@@ -22,7 +27,6 @@ import android.widget.TextView;
  */
 public class SpotifyAlbumsFragment extends Fragment implements SpotifyAlbumsContract.View {
 
-    private OnFragmentInteractionListener mListener;
 
     private SpotifyAlbumsContract.Presenter mAlbumsPresenter;
 
@@ -62,32 +66,30 @@ public class SpotifyAlbumsFragment extends Fragment implements SpotifyAlbumsCont
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_spotify_albums, container, false);
+        View root = inflater.inflate(R.layout.fragment_spotify_albums, container, false);
+
+        final EditText edittext = root.findViewById(R.id.et_search);
+        edittext.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                // If the event is a key-down event on the "enter" button
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    // Perform action on key press
+                    mAlbumsPresenter.fetchAlbums(edittext.getText().toString());
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        // Set up the list view
+        ListView listView = root.findViewById(R.id.albums_list);
+        listView.setAdapter(mAlbumsAdapter);
+        
+
+        return root;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
 
     @Override
     public void setPresenter(SpotifyAlbumsContract.Presenter presenter) {
@@ -96,6 +98,11 @@ public class SpotifyAlbumsFragment extends Fragment implements SpotifyAlbumsCont
 
     @Override
     public void showNoAlbums() {
+
+    }
+
+    @Override
+    public void showAlbums(List<Items> albums) {
 
     }
 
@@ -109,6 +116,16 @@ public class SpotifyAlbumsFragment extends Fragment implements SpotifyAlbumsCont
         if (getView() == null) {
             return;
         }
+    }
+
+    @Override
+    public void showAuthError() {
+
+    }
+
+    @Override
+    public void showFetchError() {
+
     }
 
     /**

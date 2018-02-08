@@ -1,17 +1,16 @@
-package com.example.syennamani.syncspotify;
+package com.example.syennamani.syncspotify.SpotifyAlbums;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
+
+import com.example.syennamani.syncspotify.R;
 
 public class SpotifyAlbumsActivity extends AppCompatActivity {
 
@@ -32,15 +31,14 @@ public class SpotifyAlbumsActivity extends AppCompatActivity {
         SpotifyAlbumsFragment albumsFragment = (SpotifyAlbumsFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         if(albumsFragment == null){
             albumsFragment = SpotifyAlbumsFragment.newInstance();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.add(R.id.contentFrame, albumsFragment);
+            transaction.commit();
         }
 
         // Create the presenter
         mAlbumsPresenter = new SpotifyAlbumsPresenter(albumsFragment);
         mAlbumsPresenter.start();
-/*        Intent intent = new Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse("https://accounts.spotify.com/authorize/"  + "?client_id=" + CLIENT_ID +"response_type=" + RESPONSE_TYPE + "&redirect_uri=" + REDIRECT_URI));
-        startActivity(intent);*/
     }
 
     @Override
