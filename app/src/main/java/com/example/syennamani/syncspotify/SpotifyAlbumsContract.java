@@ -6,7 +6,7 @@ package com.example.syennamani.syncspotify;
 
 public interface SpotifyAlbumsContract {
 
-    interface View {
+    interface View extends BaseView<Presenter> {
 
         void showNoAlbums();
 
@@ -17,7 +17,7 @@ public interface SpotifyAlbumsContract {
         void setLoadingIndicator(boolean state);
     }
 
-    interface Presenter {
+    interface Presenter extends BasePresenter<View> {
 
         void fetchAccessToken();
 

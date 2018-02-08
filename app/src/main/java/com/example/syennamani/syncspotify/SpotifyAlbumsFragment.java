@@ -4,9 +4,12 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 
 /**
@@ -17,11 +20,17 @@ import android.view.ViewGroup;
  * Use the {@link SpotifyAlbumsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SpotifyAlbumsFragment extends Fragment {
+public class SpotifyAlbumsFragment extends Fragment implements SpotifyAlbumsContract.View {
 
     private OnFragmentInteractionListener mListener;
 
+    private SpotifyAlbumsContract.Presenter mAlbumsPresenter;
+
     private SpotifyAlbumsAdapter mAlbumsAdapter;
+
+    //private TextView mNoAlbumsAddView;
+
+    //private LinearLayout mAlbumsView;
 
     public SpotifyAlbumsFragment() {
         // Required empty public constructor
@@ -42,6 +51,11 @@ public class SpotifyAlbumsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAlbumsAdapter = new SpotifyAlbumsAdapter();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -73,6 +87,28 @@ public class SpotifyAlbumsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void setPresenter(SpotifyAlbumsContract.Presenter presenter) {
+        mAlbumsPresenter = presenter;
+    }
+
+    @Override
+    public void showNoAlbums() {
+
+    }
+
+    @Override
+    public boolean isActive() {
+        return false;
+    }
+
+    @Override
+    public void setLoadingIndicator(final boolean state) {
+        if (getView() == null) {
+            return;
+        }
     }
 
     /**
