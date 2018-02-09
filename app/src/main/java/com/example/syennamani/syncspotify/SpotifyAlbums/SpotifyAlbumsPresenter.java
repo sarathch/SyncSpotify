@@ -83,7 +83,6 @@ public class SpotifyAlbumsPresenter implements SpotifyAlbumsContract.Presenter{
             @Override
             public void onResponse(Call<JsonBody> call, Response<JsonBody> response) {
 
-                Log.i("Response", response.body().toString());
                 //Toast.makeText()
                 if (response.isSuccessful()){
                     if (response.body() != null){
