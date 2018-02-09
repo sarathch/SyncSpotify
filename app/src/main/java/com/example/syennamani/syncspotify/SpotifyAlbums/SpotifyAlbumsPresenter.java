@@ -32,7 +32,8 @@ public class SpotifyAlbumsPresenter implements SpotifyAlbumsContract.Presenter{
     private static final String CLIENT_ID = "cf3e4b0d0b61406f845a133343147592";
     private static final String RESPONSE_TYPE = "code";
     private static String mAccessToken = "";
-
+    private boolean retryOnTokenExpiry = false;
+    private String lastSearch = "";
     public SpotifyAlbumsPresenter(@NonNull SpotifyAlbumsContract.View albumsView){
         mAlbumsView = albumsView;
         mAlbumsView.setPresenter(this);
@@ -53,8 +54,13 @@ public class SpotifyAlbumsPresenter implements SpotifyAlbumsContract.Presenter{
                         String token = tokenResponse.getmAccessToken();
                         Log.i("onSuccess", token!=null?token:"Access token NULL");
                         mAccessToken = token;
+                        if (retryOnTokenExpiry = true && !lastSearch.isEmpty()) {
+                            fetchAlbums(lastSearch);
+                            retryOnTokenExpiry = false;
+                        }
                     }else{
                         Log.i("onEmptyResponse", "Returned empty response");//Toast.makeText(getContext(),"Nothing returned",Toast.LENGTH_LONG).show();
+                        mAlbumsView.showAuthError();
                     }
                 }
             }
@@ -62,6 +68,7 @@ public class SpotifyAlbumsPresenter implements SpotifyAlbumsContract.Presenter{
             @Override
             public void onFailure(Call<Token> call, Throwable t) {
                 Log.v("Response","Failed+"+t.getMessage());
+                mAlbumsView.showAuthError();
             }
         });
     }
@@ -70,10 +77,12 @@ public class SpotifyAlbumsPresenter implements SpotifyAlbumsContract.Presenter{
     public void fetchAlbums(String albumName) {
         String headerVal = "Bearer "+mAccessToken;
         Log.v("HEADER!!", headerVal);
+        lastSearch=albumName;
         Call<JsonBody> call = new WebClient("Query").getAlbumsToClient(headerVal, albumName);
         call.enqueue(new Callback<JsonBody>() {
             @Override
             public void onResponse(Call<JsonBody> call, Response<JsonBody> response) {
+
                 Log.i("Response", response.body().toString());
                 //Toast.makeText()
                 if (response.isSuccessful()){
@@ -84,6 +93,13 @@ public class SpotifyAlbumsPresenter implements SpotifyAlbumsContract.Presenter{
                         mAlbumsView.showAlbums(items);
                     }else{
                         Log.i("onEmptyResponse", "Returned empty response");
+                        mAlbumsView.showNoAlbums();
+                    }
+                }else {
+                    if (response.code() == 401 || response.body().toString().contains("unauthrozed")){
+                        Log.i("Response", "Access token expired");
+                        retryOnTokenExpiry = true;
+                        fetchAccessToken();
                     }
                 }
             }
@@ -91,6 +107,7 @@ public class SpotifyAlbumsPresenter implements SpotifyAlbumsContract.Presenter{
             @Override
             public void onFailure(Call<JsonBody> call, Throwable t) {
                 Log.v("Response","Failed+"+t.getMessage());
+                mAlbumsView.showFetchError();
             }
         });
     }

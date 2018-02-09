@@ -7,13 +7,17 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.syennamani.syncspotify.JSON.Albums;
 import com.example.syennamani.syncspotify.JSON.Items;
 import com.example.syennamani.syncspotify.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -32,9 +36,9 @@ public class SpotifyAlbumsFragment extends Fragment implements SpotifyAlbumsCont
 
     private SpotifyAlbumsAdapter mAlbumsAdapter;
 
-    //private TextView mNoAlbumsAddView;
+    private TextView mNoAlbumsTextView;
 
-    //private LinearLayout mAlbumsView;
+    private LinearLayout mNoAlbumsView,mAlbumsView;
 
     public SpotifyAlbumsFragment() {
         // Required empty public constructor
@@ -54,7 +58,7 @@ public class SpotifyAlbumsFragment extends Fragment implements SpotifyAlbumsCont
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAlbumsAdapter = new SpotifyAlbumsAdapter();
+        mAlbumsAdapter = new SpotifyAlbumsAdapter(new ArrayList<Items>(0));
     }
 
     @Override
@@ -82,11 +86,22 @@ public class SpotifyAlbumsFragment extends Fragment implements SpotifyAlbumsCont
             }
         });
 
+        final Button btSearch= root.findViewById(R.id.bt_search);
+        btSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAlbumsPresenter.fetchAlbums(edittext.getText().toString());
+            }
+        });
+
         // Set up the list view
         ListView listView = root.findViewById(R.id.albums_list);
         listView.setAdapter(mAlbumsAdapter);
+        mAlbumsView = root.findViewById(R.id.loadAlbums);
         
-
+        // Set up no albums view
+        mNoAlbumsView = root.findViewById(R.id.noAlbums);
+        mNoAlbumsTextView = root.findViewById(R.id.tv_noAlbums);
         return root;
     }
 
@@ -98,12 +113,16 @@ public class SpotifyAlbumsFragment extends Fragment implements SpotifyAlbumsCont
 
     @Override
     public void showNoAlbums() {
-
+        mAlbumsView.setVisibility(View.GONE);
+        mNoAlbumsView.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void showAlbums(List<Items> albums) {
+        mAlbumsAdapter.replaceData(albums);
 
+        mAlbumsView.setVisibility(View.VISIBLE);
+        mNoAlbumsView.setVisibility(View.GONE);
     }
 
     @Override

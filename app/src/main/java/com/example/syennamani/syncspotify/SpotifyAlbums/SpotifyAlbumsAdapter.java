@@ -1,72 +1,74 @@
 package com.example.syennamani.syncspotify.SpotifyAlbums;
 
+import android.content.ClipData;
 import android.database.DataSetObserver;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
+import android.widget.TextView;
+
+import com.example.syennamani.syncspotify.JSON.Items;
+import com.example.syennamani.syncspotify.R;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 /**
  * Created by syennamani on 2/7/2018.
  */
 
-public class SpotifyAlbumsAdapter implements ListAdapter {
-    @Override
-    public boolean areAllItemsEnabled() {
-        return false;
+public class SpotifyAlbumsAdapter extends BaseAdapter {
+
+    private List<Items> mItems;
+
+    public SpotifyAlbumsAdapter(List<Items> items){
+        setList(items);
     }
 
-    @Override
-    public boolean isEnabled(int position) {
-        return false;
-    }
-
-    @Override
-    public void registerDataSetObserver(DataSetObserver observer) {
-
-    }
-
-    @Override
-    public void unregisterDataSetObserver(DataSetObserver observer) {
-
+    public void replaceData(List<Items> items) {
+        setList(items);
+        notifyDataSetChanged();
     }
 
     @Override
     public int getCount() {
-        return 0;
+        return mItems.size();
     }
 
     @Override
-    public Object getItem(int position) {
-        return null;
+    public Items getItem(int i) {
+        return mItems.get(i);
     }
 
     @Override
-    public long getItemId(int position) {
-        return 0;
+    public long getItemId(int i) {
+        return i;
     }
 
     @Override
-    public boolean hasStableIds() {
-        return false;
+    public View getView(int i, View view, ViewGroup viewGroup) {
+        View rowView = view;
+        if (rowView == null) {
+            LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+            rowView = inflater.inflate(R.layout.adapter_album_item, viewGroup, false);
+        }
+
+        final Items item = getItem(i);
+
+        TextView tvAlbumName = rowView.findViewById(R.id.tv_name);
+        ImageView ivAlbumCover = rowView.findViewById(R.id.iv_album);
+
+        tvAlbumName.setText(item.getName());
+        if(item.getImages()!= null && item.getImages()[0] != null && item.getImages()[0].getUrl()!=null){
+            Picasso.with(viewGroup.getContext()).load(item.getImages()[0].getUrl()).into(ivAlbumCover);
+        }
+        return rowView;
     }
 
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        return null;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return 0;
-    }
-
-    @Override
-    public int getViewTypeCount() {
-        return 0;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
+    public void setList(List<Items> list) {
+        mItems = list;
     }
 }
