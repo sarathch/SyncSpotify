@@ -3,14 +3,10 @@ package com.example.syennamani.syncspotify.SpotifyAlbums;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.example.syennamani.syncspotify.JSON.Albums;
 import com.example.syennamani.syncspotify.JSON.Items;
 import com.example.syennamani.syncspotify.JSON.JsonBody;
 import com.example.syennamani.syncspotify.JSON.Token;
 import com.example.syennamani.syncspotify.Web.WebClient;
-import com.google.gson.JsonElement;
-
-import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +15,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.support.v4.util.Preconditions.checkNotNull;
 
 /**
  * Created by syennamani on 2/7/2018.
@@ -28,11 +23,9 @@ import static android.support.v4.util.Preconditions.checkNotNull;
 public class SpotifyAlbumsPresenter implements SpotifyAlbumsContract.Presenter{
 
     private final SpotifyAlbumsContract.View mAlbumsView;
-    private static final String REDIRECT_URI = "syncspotify://callback";
-    private static final String CLIENT_ID = "cf3e4b0d0b61406f845a133343147592";
-    private static final String RESPONSE_TYPE = "code";
+    private static final String CLIENT_HASH = "Y2YzZTRiMGQwYjYxNDA2Zjg0NWExMzMzNDMxNDc1OTI6ZDk1ODBlMDQ4MDUxNGFhMDhlMWZlOWFlMmRiNTI3NWI=";
     private static String mAccessToken = "";
-    private boolean retryOnTokenExpiry = false;
+    private static boolean retryOnTokenExpiry = false;
     private String lastSearch = "";
     public SpotifyAlbumsPresenter(@NonNull SpotifyAlbumsContract.View albumsView){
         mAlbumsView = albumsView;
@@ -41,7 +34,7 @@ public class SpotifyAlbumsPresenter implements SpotifyAlbumsContract.Presenter{
 
     @Override
     public void fetchAccessToken() {
-        String headerVal = "Basic Y2YzZTRiMGQwYjYxNDA2Zjg0NWExMzMzNDMxNDc1OTI6ZDk1ODBlMDQ4MDUxNGFhMDhlMWZlOWFlMmRiNTI3NWI=";
+        String headerVal = "Basic "+CLIENT_HASH;
         Call<Token> call = new WebClient("Auth").getAccessTokenToClient(headerVal);
         call.enqueue(new Callback<Token>() {
             @Override
@@ -95,7 +88,7 @@ public class SpotifyAlbumsPresenter implements SpotifyAlbumsContract.Presenter{
                         mAlbumsView.showNoAlbums();
                     }
                 }else {
-                    if (response.code() == 401 || response.body().toString().contains("unauthrozed")){
+                    if (response.code() == 401 || response.body().toString().contains("unauthorized")){
                         Log.i("Response", "Access token expired");
                         retryOnTokenExpiry = true;
                         fetchAccessToken();
@@ -116,7 +109,4 @@ public class SpotifyAlbumsPresenter implements SpotifyAlbumsContract.Presenter{
         fetchAccessToken();
     }
 
-    private void loadAlbums() {
-
-    }
 }

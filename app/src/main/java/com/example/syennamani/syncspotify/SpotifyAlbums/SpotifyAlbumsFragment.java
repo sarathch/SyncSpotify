@@ -24,8 +24,6 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link SpotifyAlbumsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
  * Use the {@link SpotifyAlbumsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
@@ -98,7 +96,7 @@ public class SpotifyAlbumsFragment extends Fragment implements SpotifyAlbumsCont
         ListView listView = root.findViewById(R.id.albums_list);
         listView.setAdapter(mAlbumsAdapter);
         mAlbumsView = root.findViewById(R.id.loadAlbums);
-        
+
         // Set up no albums view
         mNoAlbumsView = root.findViewById(R.id.noAlbums);
         mNoAlbumsTextView = root.findViewById(R.id.tv_noAlbums);
@@ -145,20 +143,5 @@ public class SpotifyAlbumsFragment extends Fragment implements SpotifyAlbumsCont
     @Override
     public void showFetchError() {
 
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 }
