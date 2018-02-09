@@ -7,10 +7,17 @@ import com.example.syennamani.syncspotify.JSON.Items;
 import com.example.syennamani.syncspotify.JSON.JsonBody;
 import com.example.syennamani.syncspotify.JSON.Token;
 import com.example.syennamani.syncspotify.Web.WebClient;
+import com.google.gson.JsonElement;
 
 import java.util.Arrays;
 import java.util.List;
 
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -66,7 +73,7 @@ public class SpotifyAlbumsPresenter implements SpotifyAlbumsContract.Presenter{
         });
     }
 
-    @Override
+/*    @Override
     public void fetchAlbums(String albumName) {
         String headerVal = "Bearer "+mAccessToken;
         Log.v("HEADER!!", headerVal);
@@ -102,6 +109,39 @@ public class SpotifyAlbumsPresenter implements SpotifyAlbumsContract.Presenter{
                 mAlbumsView.showFetchError();
             }
         });
+    }*/
+
+    @Override
+    public void fetchAlbums(String albumName) {
+        String headerVal = "Bearer "+mAccessToken;
+        Log.v("HEADER!!", headerVal);
+        lastSearch=albumName;
+        new WebClient("Query")
+                .getAlbumsToClient(headerVal, albumName)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<JsonBody>(){
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.v("Response received", "subscribed");
+                    }
+
+                    @Override
+                    public void onNext(JsonBody jsonBody) {
+                        Log.v("Response received", jsonBody.toString());
+                        mAlbumsView.showAlbums(Arrays.asList(jsonBody.getAlbums().getItems()));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.v("Response received", "error");
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     @Override

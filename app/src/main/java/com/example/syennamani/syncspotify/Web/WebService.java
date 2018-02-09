@@ -7,6 +7,7 @@ import com.google.gson.JsonElement;
 
 import org.json.JSONObject;
 
+import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
@@ -28,8 +29,8 @@ public interface WebService {
     );
 
     @GET("v1/search")
-    Call<JsonBody> getAlbums(@Header("Authorization") String headerVal,
-                             @Query("q") String albumName,
-                             @Query("type") String type
+    Observable<JsonBody> getAlbums(@Header("Authorization") String headerVal,
+                                   @Query("q") String albumName,
+                                   @Query("type") String type
     );
 }
