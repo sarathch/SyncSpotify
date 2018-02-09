@@ -17,6 +17,7 @@ import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -120,16 +121,22 @@ public class SpotifyAlbumsPresenter implements SpotifyAlbumsContract.Presenter{
                 .getAlbumsToClient(headerVal, albumName)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<JsonBody>(){
+                .map(new Function<JsonBody, List<Items> >() {
+                    @Override
+                    public List<Items> apply(JsonBody jsonBody){
+                        return Arrays.asList(jsonBody.getAlbums().getItems());
+                    }
+                })
+                .subscribe(new Observer<List<Items>>(){
                     @Override
                     public void onSubscribe(Disposable d) {
                         Log.v("Response received", "subscribed");
                     }
 
                     @Override
-                    public void onNext(JsonBody jsonBody) {
-                        Log.v("Response received", jsonBody.toString());
-                        mAlbumsView.showAlbums(Arrays.asList(jsonBody.getAlbums().getItems()));
+                    public void onNext(List<Items> list) {
+                        Log.v("Response received", ""+list.size());
+                        mAlbumsView.showAlbums(list);
                     }
 
                     @Override
