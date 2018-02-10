@@ -11,3 +11,4 @@ SyncSpotify queries on album list available on Spotify using the fetched CC Acce
 TO-DOs:
 1. Implementing refresh token mechanism on expiry
 2. Few small error message handling needs to be done on SyncSpotify View.
+3. UI design needs to be beautified and optimized.
