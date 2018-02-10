@@ -1,3 +1,7 @@
+SyncSptify App
+
+Author : Sarath 
+
 SyncSpotify is a simple project to connect to Spotify's Web API.
 
 SyncSpotify fetches Client Credentials Auth token during AUthorization step.
