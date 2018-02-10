@@ -9,6 +9,7 @@ import com.example.syennamani.syncspotify.JSON.Token;
 import com.example.syennamani.syncspotify.Web.WebClient;
 import com.google.gson.JsonElement;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -73,45 +74,7 @@ public class SpotifyAlbumsPresenter implements SpotifyAlbumsContract.Presenter{
             }
         });
     }
-
-/*    @Override
-    public void fetchAlbums(String albumName) {
-        String headerVal = "Bearer "+mAccessToken;
-        Log.v("HEADER!!", headerVal);
-        lastSearch=albumName;
-        Call<JsonBody> call = new WebClient("Query").getAlbumsToClient(headerVal, albumName);
-        call.enqueue(new Callback<JsonBody>() {
-            @Override
-            public void onResponse(Call<JsonBody> call, Response<JsonBody> response) {
-
-                //Toast.makeText()
-                if (response.isSuccessful()){
-                    if (response.body() != null){
-                        Log.i("onSuccess", response.body().toString());
-                        JsonBody body = response.body();
-                        List<Items> items = Arrays.asList(body.getAlbums().getItems());
-                        mAlbumsView.showAlbums(items);
-                    }else{
-                        Log.i("onEmptyResponse", "Returned empty response");
-                        mAlbumsView.showNoAlbums();
-                    }
-                }else {
-                    if (response.code() == 401 || response.body().toString().contains("unauthorized")){
-                        Log.i("Response", "Access token expired");
-                        retryOnTokenExpiry = true;
-                        fetchAccessToken();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<JsonBody> call, Throwable t) {
-                Log.v("Response","Failed+"+t.getMessage());
-                mAlbumsView.showFetchError();
-            }
-        });
-    }*/
-
+    
     @Override
     public void fetchAlbums(String albumName) {
         String headerVal = "Bearer "+mAccessToken;
@@ -121,10 +84,18 @@ public class SpotifyAlbumsPresenter implements SpotifyAlbumsContract.Presenter{
                 .getAlbumsToClient(headerVal, albumName)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                // Fetch the items sub list with in the JsonBody object
                 .map(new Function<JsonBody, List<Items> >() {
                     @Override
                     public List<Items> apply(JsonBody jsonBody){
-                        return Arrays.asList(jsonBody.getAlbums().getItems());
+                        List<Items> items = Arrays.asList(jsonBody.getAlbums().getItems());
+                        List<Items> filteredList = new ArrayList<>();
+                        for(Items item : items){
+                            Log.v("ITEM",item.toString());
+                            if(item.getAlbum_type().equals("album"))
+                                filteredList.add(item);
+                        }
+                         return filteredList;
                     }
                 })
                 .subscribe(new Observer<List<Items>>(){
@@ -142,6 +113,7 @@ public class SpotifyAlbumsPresenter implements SpotifyAlbumsContract.Presenter{
                     @Override
                     public void onError(Throwable e) {
                         Log.v("Response received", "error");
+                        mAlbumsView.showNoAlbums();
                     }
 
                     @Override
